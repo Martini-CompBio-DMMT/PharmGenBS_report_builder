@@ -2,9 +2,10 @@
 
 suppressPackageStartupMessages(library("argparse", lib.loc = "/vol1/DATA/PGx_project/R_locLib/R3.6.0-BiocC3.10"))
 
-parser <- ArgumentParser(usage="Generate reports.
-                         N.B. If the report of the patient is already present the report will not be generated.
-                         Delete report manually to force new generation.")
+parser <- ArgumentParser(usage="Generate reports")
+
+# N.B. If the report of the patient is already present the report will not be generated.
+# Delete report manually to force new generation.
 
 parser$add_argument("--file-info", default="../web_app/samples_info.tsv",
                     dest="file_info", help = "Patient information file")
