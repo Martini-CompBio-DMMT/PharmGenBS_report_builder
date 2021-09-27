@@ -1,0 +1,115 @@
+---
+output:
+  pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r c3, echo=FALSE}
+library(PharmGenBS)
+library(kableExtra)
+
+# load("all_patients_report.Rdata")
+# i=27
+# tbl <- all_patients_report[[i]]$short
+# infos <- all_patients_report[[i]]$long
+# paziente <- names(all_patients_report)[i]
+
+```
+
+
+```{r c4, echo=F}
+images <- c("../images-template/rosso_small.png", "../images-template/giallo_small.png", "../images-template/verde_small.png", "../images-template/white.png")
+names(images) <- c("ROSSO", "GIALLO", "VERDE", "white")
+
+img_paths <- images[as.character(tbl$TI)]
+img_paths[sample(1:26,1)] <- images["white"]
+
+```
+
+```{r c2, results='asis', echo=F}
+cat("#", paziente, "\n")
+```
+
+```{r c1, echo=F}
+mat <- matrix("", max(table(tbl$TI)), 6)
+img_paths <- rep(images["white"], max(table(tbl$TI)))
+colnames(mat) <- c("ROSSO", "DrugR", "GIALLO", "DrugY", "VERDE", "DrugG")
+
+img_red_paths <- img_paths
+if (sum(tbl$TI=="ROSSO")){
+  mat[1:sum(tbl$TI=="ROSSO"), 2]<- tbl$Drug[tbl$TI=="ROSSO"]
+  img_red_paths[1:sum(tbl$TI=="ROSSO")] <- images["ROSSO"]
+}
+
+img_yellow_paths <- img_paths
+if (sum(tbl$TI=="GIALLO")){
+  mat[1:sum(tbl$TI=="GIALLO"), 4]<- tbl$Drug[tbl$TI=="GIALLO"]
+  img_yellow_paths[1:sum(tbl$TI=="GIALLO")] <- images["GIALLO"]
+}
+
+mat[1:sum(tbl$TI=="VERDE"), 6]<- tbl$Drug[tbl$TI=="VERDE"]
+img_green_paths <- img_paths
+img_green_paths[1:sum(tbl$TI=="VERDE")] <- images["VERDE"]
+
+# booktabs = T, align = "rl", longtable = T,
+kable(mat,  col.names = c("", "Drug", "", "Drug", "", "Drug"), booktabs = T) %>% 
+  column_spec(1, image = spec_image(img_red_paths, 50, 50)) %>%
+  column_spec(3, image = spec_image(img_yellow_paths, 50, 50)) %>%
+  column_spec(5, image = spec_image(img_green_paths, 50, 50)) %>%
+  column_spec(2, link = paste0("#",mat[,2])) %>%
+  column_spec(4, link = paste0("#",mat[,4])) %>%
+  column_spec(6, link = paste0("#",mat[,6]))
+```
+
+```{r c5, results='asis', echo=F}
+
+# problematic_drugs <- tbl$Drug[tbl$TI %in% c("ROSSO", "GIALLO")]
+problematic_drugs <- tbl$Drug
+
+for (pharma in problematic_drugs){
+  pinfo <- infos[[pharma]]
+  
+  img_paths <- images[pinfo$category]
+  if (is.null(pinfo))
+    img_paths <- images["VERDE"]
+  
+  tag=paste0("{#",pharma ,"}")
+  # cat("##", pharma, tag, "\n")
+  
+  light_img <- paste0("\\includegraphics[width=0.2in,height=\\textheight]{", img_paths[1], "}")
+  
+  cat("\\hypertarget{",pharma,"}{%
+  \\subsection{",light_img, " ", pharma,"}\\label{",pharma,"}}", sep="")
+  
+  # cat("![](", img_paths[1], "){width=20}\n", sep="")
+  
+  # cat("\\subsection{New section", pharma, "}", tag, "\n\n")
+  # cat("\\subsection{", pharma, "}\n")
+  
+  if (!is.null(pinfo)){
+  
+    df_fc <- head(pinfo[pinfo$label=="FC",],1)
+    if (nrow(df_fc)){
+      cat("**[FC]** ")
+      cat("![](", images[df_fc$category], "){width=10} ", sep="")
+      cat(df_fc$text)
+      cat("\n\n")
+    }
+    
+    df_fd <- head(pinfo[pinfo$label=="FD",],1)
+    if (nrow(df_fd)){
+      cat("**[FD]** ")
+      cat("![](", images[df_fd[1,,drop=F]$category], "){width=10} ", sep="")
+      cat(df_fd$text)
+      cat("\n\n")
+    }
+  } else {
+    cat("Nessun dato disponibile\n\n")
+  }
+
+}
+```
+

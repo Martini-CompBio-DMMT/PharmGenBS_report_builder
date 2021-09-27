@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+create_report.Rproj
+.DS_Store
+.Rbuildignore
+.gitignore
+data-raw/.venv/
