@@ -1,6 +1,7 @@
 ---
 output:
   pdf_document
+always_allow_html: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -8,20 +9,21 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r c3, echo=FALSE}
-library(PharmGenBS)
-library(kableExtra)
-
-# load("all_patients_report.Rdata")
-# i=27
-# tbl <- all_patients_report[[i]]$short
-# infos <- all_patients_report[[i]]$long
-# paziente <- names(all_patients_report)[i]
+suppressPackageStartupMessages(library(PharmGenBS))
+suppressPackageStartupMessages(library(kableExtra))
+"build_reports_manual.R"
+load("all_patients_report.Rdata")
+i=27
+tbl <- all_patients_report[[i]]$short
+infos <- all_patients_report[[i]]$long
+paziente <- names(all_patients_report)[i]
 
 ```
 
 
 ```{r c4, echo=F}
-images <- c("../images-template/rosso_small.png", "../images-template/giallo_small.png", "../images-template/verde_small.png", "../images-template/white.png")
+images <- c("images/rosso_small.png", "images/giallo_small.png",
+            "images/verde_small.png", "images/white.png")
 names(images) <- c("ROSSO", "GIALLO", "VERDE", "white")
 
 img_paths <- images[as.character(tbl$TI)]
@@ -55,7 +57,7 @@ img_green_paths <- img_paths
 img_green_paths[1:sum(tbl$TI=="VERDE")] <- images["VERDE"]
 
 # booktabs = T, align = "rl", longtable = T,
-kable(mat,  col.names = c("", "Drug", "", "Drug", "", "Drug"), booktabs = T) %>% 
+kable(mat,  col.names = c("", "Drug", "", "Drug", "", "Drug")) %>% 
   column_spec(1, image = spec_image(img_red_paths, 50, 50)) %>%
   column_spec(3, image = spec_image(img_yellow_paths, 50, 50)) %>%
   column_spec(5, image = spec_image(img_green_paths, 50, 50)) %>%
@@ -84,11 +86,6 @@ for (pharma in problematic_drugs){
   cat("\\hypertarget{",pharma,"}{%
   \\subsection{",light_img, " ", pharma,"}\\label{",pharma,"}}", sep="")
   
-  # cat("![](", img_paths[1], "){width=20}\n", sep="")
-  
-  # cat("\\subsection{New section", pharma, "}", tag, "\n\n")
-  # cat("\\subsection{", pharma, "}\n")
-  
   if (!is.null(pinfo)){
   
     df_fc <- head(pinfo[pinfo$label=="FC",],1)
@@ -112,4 +109,3 @@ for (pharma in problematic_drugs){
 
 }
 ```
-

@@ -31,10 +31,9 @@ if (0) {
   # BiocManager::install(pkgs[package_check], ask = F, update = F)
   devtools::install_github("Martini-CompBio-DMMT/PharmGenBS",
                            ref="main",
-                           auth_token = "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"
+                           auth_token = "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"
   )
 }
-
 
 ## Functions ##
 create_reports <- function(file_info, file_genos) {
