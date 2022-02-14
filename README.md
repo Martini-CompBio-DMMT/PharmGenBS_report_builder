@@ -20,8 +20,7 @@ Install packages kableExtra, rmarkdown and devtools
 Install the package PharmGenBS from github repository [Martini-CompBio-DMMT](https://github.com/Martini-CompBio-DMMT)
 
     devtools::install_github("Martini-CompBio-DMMT/PharmGenBS",
-                         ref="main",
-                         auth_token = "the token goes here")
+                         ref="main")
 
 ## Create the reports [FIRST time]
 
